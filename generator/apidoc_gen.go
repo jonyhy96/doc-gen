@@ -64,10 +64,7 @@ const apiDocTpl = `
 
 // Gen genera apidoc like doc
 func Gen(docs []APIDoc, filename string) {
-	regex, err := regexp.Compile("\n\n|,\n $")
-	if err != nil {
-		return
-	}
+	emptyLineRegex := regexp.MustCompile(`(?m)^\s*$[\r\n]*|[\r\n]+\s+\z`)
 	var b bytes.Buffer
 	temp := bufio.NewWriter(&b)
 	for _, doc := range docs {
@@ -79,8 +76,8 @@ func Gen(docs []APIDoc, filename string) {
 		t.Execute(temp, doc)
 		temp.Flush()
 	}
-	s := regex.ReplaceAllString(b.String(), "")
-	err = ioutil.WriteFile(filename, []byte(s), 0644)
+	s := emptyLineRegex.ReplaceAllString(b.String(), "")
+	err := ioutil.WriteFile(filename, []byte(s), 0644)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
