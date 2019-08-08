@@ -1,11 +1,12 @@
 package cmd
 
 import (
-	"doc-gen/generator"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/jonyhy96/doc-gen/generator"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,6 +27,9 @@ var rootCmd = &cobra.Command{
 		filename, err := cmd.Flags().GetString("file")
 		if err != nil {
 			log.Fatalln(err.Error())
+		}
+		if filename == "" {
+			log.Fatalln("must support filename")
 		}
 		currpath, _ := os.Getwd()
 		generator.ParsePackagesFromDir(currpath)
