@@ -8,6 +8,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 ```
 $ go get github.com/jonyhy96/doc-gen
+$ doc-gen -h
+$ doc-gen -f examples/models/user.go
+
+$ apidoc -f ".*\\.doc$" -o apidoc // you need have your own apidoc.json first
 ```
 
 ### Prerequisites
