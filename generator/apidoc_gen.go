@@ -54,7 +54,7 @@ const apiDocTpl = `
 		},
 	]
 	{{else}}{
-		{{range $k, $v := .Success}} "{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}{{end}} 
+			{{range $k, $v := .Success}} "{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}{{end}} 
 	}
 	{{ end }}
 }
