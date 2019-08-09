@@ -3,8 +3,15 @@ package models
 // User user
 // apidoc motherfucker
 type User struct {
-	Name string `json:"name" bson:"name" description:"用户名称"`
-	Age  int8   `json:"age" bson:"age" description:"用户年龄"`
+	Name        string `json:"name" bson:"name" description:"用户名称"`
+	Age         int8   `json:"age" bson:"age" description:"用户年龄"`
+	GirlFriends Girl   `json:"girl" bson:"girl"`
+}
+
+// Girl girl
+type Girl struct {
+	Name string `json:"name" bson:"name" description:"名字"`
+	Age  string `json:"age" bson:"age" description:"年龄"`
 }
 
 // CreateUser create user

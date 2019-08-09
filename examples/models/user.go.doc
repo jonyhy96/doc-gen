@@ -1,0 +1,62 @@
+/**
+ * 
+ * @api {post} /v1/users 创建用户
+ * @apiName 创建用户
+ * 
+ * @apiParam { Number } age 用户年龄
+ * @apiParam { String } girl.name 名字
+ * @apiParam { String } girl.age 年龄
+ * @apiParam { String } name 用户名称
+ * @apiSuccess { String } id 用户id
+ * 
+ * @apiParamExample  { Object } Request-Example:
+{
+	"age" : "Number",
+	"girl" : 
+		{
+			"name" : "String",
+			"age" : "String",
+		}
+	"name" : "String",
+}
+ * 
+ * @apiSuccessExample { Object } Success-Response:
+{
+	"data": {
+			"id" : "String",
+	}
+}
+ * 
+ * 
+ */
+/**
+ * 
+ * @api {get} /v1/users 获取所有用户
+ * @apiName 获取所有用户
+ * 
+ * @apiSuccess { Number } age 用户年龄
+ * @apiSuccess { String } girl.name 名字
+ * @apiSuccess { String } girl.age 年龄
+ * @apiSuccess { String } name 用户名称
+ * 
+ * @apiParamExample  { Object } Request-Example:
+{
+}
+ * 
+ * @apiSuccessExample { Object } Success-Response:
+{
+	"data":  [
+		{
+			"age" : "Number",
+			"girl" : 
+				{
+					"name" : "String",
+					"age" : "String",
+				}
+			"name" : "String",
+		},
+	]
+}
+ * 
+ * 
+ */

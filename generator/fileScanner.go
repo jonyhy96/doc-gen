@@ -169,7 +169,7 @@ L:
 							// Still searching for the right object
 							continue
 						}
-						params = parseObject(d)
+						params = parseObject(d, packageName)
 						// When we've found the correct object, we can stop searching
 						break L
 					}
@@ -249,7 +249,7 @@ func parsePackageFromDir(path string) error {
 	return nil
 }
 
-func parseObject(d *ast.Object) *[]Param {
+func parseObject(d *ast.Object, packageName string) *[]Param {
 	ts, ok := d.Decl.(*ast.TypeSpec)
 	if !ok {
 		log.Fatalf("Unknown type without TypeSec: %v", d)
@@ -260,20 +260,40 @@ func parseObject(d *ast.Object) *[]Param {
 	case *ast.Ident:
 		log.Fatalln("Current does't support Ident")
 	case *ast.StructType:
-		return parseStruct(t)
+		return parseStruct(t, packageName)
 	}
 	return nil
 }
 
-func parseStruct(st *ast.StructType) *[]Param {
+func parseStruct(st *ast.StructType, packageName string) *[]Param {
 	var result []Param
 	if st.Fields.List != nil {
 		for _, field := range st.Fields.List { // 默认所有的field都是入参，所以要专门定义dto,vo,po
 			var temp Param
+			if field.Tag == nil {
+				continue
+			}
 			stag := reflect.StructTag(strings.Trim(field.Tag.Value, "`"))
-			temp.Name = stag.Get("bson")
-			temp.Type = basicTypes[fmt.Sprint(field.Type)]
-			temp.Description = stag.Get("description")
+			switch t := field.Type.(type) {
+			case *ast.ArrayType:
+				temp.Name = stag.Get("bson")
+				child := handleObject(fmt.Sprint(t.Elt), packageName)
+				temp.Type = "Object[]"
+				temp.Description = stag.Get("description")
+				temp.Child = *child
+			case *ast.Ident:
+				if t.Obj != nil {
+					child := parseObject(t.Obj, packageName)
+					temp.Name = stag.Get("bson")
+					temp.Type = "Object"
+					temp.Child = *child
+					temp.Description = stag.Get("description")
+				} else {
+					temp.Name = stag.Get("bson")
+					temp.Type = basicTypes[fmt.Sprint(field.Type)]
+					temp.Description = stag.Get("description")
+				}
+			}
 			result = append(result, temp)
 		}
 	} else {

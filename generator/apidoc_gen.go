@@ -27,6 +27,7 @@ type Param struct {
 	Name        string
 	Type        string
 	Description string
+	Child       []Param
 }
 
 const apiDocTpl = `
@@ -37,24 +38,97 @@ const apiDocTpl = `
 {{if .Group}} * @apiGroup {{.Group}}{{end}}
 {{if .Version}} * @apiVersion {{.Version}}{{end}}
  * 
- {{range $k, $v := .Params}}* @apiParam  { {{$v.Type}} } {{$k}} {{$v.Description}}{{"\n"}} {{end}}
- * 
- {{range $k, $v := .Success}}* @apiSuccess { {{$v.Type}} } {{$k}} {{$v.Description}}{{"\n"}} {{end}}
+ {{range $k, $v := .Params}}
+ 	{{if eq $v.Type "Object"}}
+		{{range $ck, $cv := $v.Child}}
+ * @apiParam { {{$cv.Type}} } {{$k}}.{{$cv.Name}} {{$cv.Description}}{{"\n"}} 
+		{{end}}
+	{{else}}
+ * @apiParam { {{$v.Type}} } {{$k}} {{$v.Description}}{{"\n"}} 
+	{{end}}
+ {{end}} 
+
+ {{range $k, $v := .Success}}
+ 	{{if eq $v.Type "Object"}}
+		{{range $ck, $cv := $v.Child}}
+ * @apiSuccess { {{$cv.Type}} } {{$k}}.{{$cv.Name}} {{$cv.Description}}{{"\n"}} 
+		{{end}}
+	{{else}}
+ * @apiSuccess { {{$v.Type}} } {{$k}} {{$v.Description}}{{"\n"}} 
+	{{end}}
+ {{end}}
  * 
  * @apiParamExample  { Object } Request-Example:
 {
- {{range $k, $v := .Params}}"{{$k}}" : "{{$v.Type}}",{{"\n"}} {{end}}
+{{range $k, $v := .Params}}
+{{ $length := len $v.Child }} {{ if eq $length 0 }}
+	"{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}
+	{{else}}
+	"{{$k}}" : 
+		{{ if eq $v.Type "Object[]"}}
+		[{
+				{{range $ck, $cv := $v.Child}} 
+			"{{$cv.Name}}" : "{{$cv.Type}}",{{"\n\t\t\t\t\t"}}
+				{{end}}
+		},]
+		{{else}}
+		{
+			{{range $ck, $cv := $v.Child}} 
+			"{{$cv.Name}}" : "{{$cv.Type}}",{{"\n\t\t\t\t\t"}}
+			{{end}}
+		}
+		{{end}}
+	{{end}} 
+{{end}}
 }
  * 
  * @apiSuccessExample { Object } Success-Response:
 {
 	"data": {{ if .IsSuccessArray }} [
 		{
-			{{range $k, $v := .Success}} "{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}{{end}} 
+		{{range $k, $v := .Success}} 
+			{{ $length := len $v.Child }} {{ if eq $length 0 }}
+			"{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}
+			{{else}}
+			"{{$k}}" : 
+				{{ if eq $v.Type "Object[]"}}
+				[{
+						{{range $ck, $cv := $v.Child}} 
+					"{{$cv.Name}}" : "{{$cv.Type}}",{{"\n\t\t\t\t\t"}}
+						{{end}}
+				},]
+				{{else}}
+				{
+					{{range $ck, $cv := $v.Child}} 
+					"{{$cv.Name}}" : "{{$cv.Type}}",{{"\n\t\t\t\t\t"}}
+					{{end}}
+				}
+				{{end}}
+			{{end}}
+		{{end}} 
 		},
 	]
 	{{else}}{
-			{{range $k, $v := .Success}} "{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}{{end}} 
+	{{range $k, $v := .Success}} 
+		{{ $length := len $v.Child }} {{ if eq $length 0 }}
+			"{{$k}}" : "{{$v.Type}}",{{"\n\t\t\t"}}
+		{{else}}
+			"{{$k}}" : 
+				{{ if eq $v.Type "Object[]"}}
+					[{
+						{{range $ck, $cv := $v.Child}} 
+							"{{$cv.Name}}" : "{{$cv.Type}}",{{"\n\t\t\t\t\t"}}
+						{{end}}
+					},]
+				{{else}}
+				{
+					{{range $ck, $cv := $v.Child}} 
+						"{{$cv.Name}}" : "{{$cv.Type}}",{{"\n\t\t\t\t\t"}}
+					{{end}}
+				}
+			{{end}}
+		{{end}}
+	{{end}} 
 	}
 	{{ end }}
 }
@@ -73,7 +147,10 @@ func Gen(docs []APIDoc, filename string) {
 		}
 		t := template.New("apidoc")
 		t, _ = t.Parse(apiDocTpl)
-		t.Execute(temp, doc)
+		err := t.Execute(temp, doc)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		temp.Flush()
 	}
 	s := emptyLineRegex.ReplaceAllString(b.String(), "")
