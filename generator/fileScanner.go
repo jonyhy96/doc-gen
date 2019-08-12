@@ -105,11 +105,9 @@ func inputHandle(tempAPI *APIDoc, s string) error {
 		return err
 	}
 	if isBasicType(result[0]) {
-		tempAPI.Params = map[string]Param{
-			result[1]: Param{
-				Type:        basicTypes[result[0]],
-				Description: result[2], // 检查是否越界
-			},
+		tempAPI.Params[result[1]] = Param{
+			Type:        basicTypes[result[0]],
+			Description: result[2], // 检查是否越界
 		}
 		return nil
 	}
@@ -135,11 +133,9 @@ func outputHandle(tempAPI *APIDoc, s string) error {
 		return err
 	}
 	if isBasicType(result[0]) {
-		tempAPI.Success = map[string]Param{
-			result[1]: Param{
-				Type:        basicTypes[result[0]],
-				Description: result[2], // 检查是否越界
-			},
+		tempAPI.Success[result[1]] = Param{
+			Type:        basicTypes[result[0]],
+			Description: result[2], // 检查是否越界
 		}
 		return nil
 	}
