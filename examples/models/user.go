@@ -26,6 +26,8 @@ func CreateUser() {
 // GetUser get user
 // @name 获取所有用户
 // @route  /v1/users get
+// @in string name 名称
+// @in string age 年龄
 // @out object []models.User 用户列表
 func GetUser() {
 

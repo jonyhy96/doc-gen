@@ -34,6 +34,8 @@
  * @api {get} /v1/users 获取所有用户
  * @apiName 获取所有用户
  * 
+ * @apiParam { String } age 年龄
+ * @apiParam { String } name 名称
  * @apiSuccess { Number } age 用户年龄
  * @apiSuccess { String } girl.name 名字
  * @apiSuccess { String } girl.age 年龄
@@ -41,6 +43,8 @@
  * 
  * @apiParamExample  { Object } Request-Example:
 {
+	"age" : "String",
+	"name" : "String",
 }
  * 
  * @apiSuccessExample { Object } Success-Response:
