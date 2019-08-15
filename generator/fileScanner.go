@@ -104,6 +104,15 @@ func inputHandle(tempAPI *APIDoc, s string) error {
 	if err != nil {
 		return err
 	}
+	if strings.HasPrefix(result[0], "[]") {
+		if isBasicType(result[0][2:]) {
+			tempAPI.Params[result[1]] = Param{
+				Type:        basicTypes[result[0][2:]] + "[]",
+				Description: result[2],
+			}
+			return nil
+		}
+	}
 	if isBasicType(result[0]) {
 		tempAPI.Params[result[1]] = Param{
 			Type:        basicTypes[result[0]],
@@ -114,10 +123,10 @@ func inputHandle(tempAPI *APIDoc, s string) error {
 	strs := strings.Split(result[1], ".")
 	packageName := strs[0]
 	objectname := strs[len(strs)-1]
-	params := handleObject(objectname, packageName)
 	if strings.HasPrefix(packageName, "[]") {
 		log.Fatalln("doesn'h support input array")
 	}
+	params := handleObject(objectname, packageName)
 	if params == nil {
 		log.Fatalln("you should run this under your project root path")
 	}
@@ -274,9 +283,13 @@ func parseStruct(st *ast.StructType, packageName string) *[]Param {
 			case *ast.ArrayType:
 				temp.Name = stag.Get("bson")
 				child := handleObject(fmt.Sprint(t.Elt), packageName)
-				temp.Type = "Object[]"
+				if !isBasicType(fmt.Sprint(t.Elt)) {
+					temp.Type = "Object[]"
+					temp.Child = *child
+				} else {
+					temp.Type = basicTypes[fmt.Sprint(t.Elt)] + "[]"
+				}
 				temp.Description = stag.Get("description")
-				temp.Child = *child
 			case *ast.Ident:
 				if t.Obj != nil {
 					child := parseObject(t.Obj, packageName)

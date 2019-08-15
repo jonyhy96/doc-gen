@@ -84,6 +84,8 @@ const apiDocTpl = `
  * 
  * @apiSuccessExample { Object } Success-Response:
 {
+	"code": 1,
+	"msg": "",
 	"data": {{ if .IsSuccessArray }} [
 		{
 		{{range $k, $v := .Success}} 

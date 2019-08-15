@@ -6,7 +6,7 @@
  * @apiParam { Number } age 用户年龄
  * @apiParam { String } girl.name 名字
  * @apiParam { String } girl.age 年龄
- * @apiParam { String } name 用户名称
+ * @apiParam {  } name 用户名称
  * @apiSuccess { String } id 用户id
  * 
  * @apiParamExample  { Object } Request-Example:
@@ -17,11 +17,13 @@
 			"name" : "String",
 			"age" : "String",
 		}
-	"name" : "String",
+	"name" : "",
 }
  * 
  * @apiSuccessExample { Object } Success-Response:
 {
+	"code": 1,
+	"msg": "",
 	"data": {
 			"id" : "String",
 	}
@@ -39,7 +41,7 @@
  * @apiSuccess { Number } age 用户年龄
  * @apiSuccess { String } girl.name 名字
  * @apiSuccess { String } girl.age 年龄
- * @apiSuccess { String } name 用户名称
+ * @apiSuccess {  } name 用户名称
  * 
  * @apiParamExample  { Object } Request-Example:
 {
@@ -49,6 +51,8 @@
  * 
  * @apiSuccessExample { Object } Success-Response:
 {
+	"code": 1,
+	"msg": "",
 	"data":  [
 		{
 			"age" : "Number",
@@ -57,7 +61,7 @@
 					"name" : "String",
 					"age" : "String",
 				}
-			"name" : "String",
+			"name" : "",
 		},
 	]
 }
