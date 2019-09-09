@@ -273,10 +273,15 @@ func parseStruct(st *ast.StructType, packageName string) *[]Param {
 			switch t := field.Type.(type) {
 			case *ast.ArrayType:
 				temp.Name = stag.Get("bson")
-				child := handleObject(fmt.Sprint(t.Elt), packageName)
-				temp.Type = "Object[]"
+				typeString := fmt.Sprint(t.Elt)
+				if isBasicType(typeString) {
+					temp.Type = basicTypes[typeString] + "[]"
+				} else {
+					child := handleObject(fmt.Sprint(t.Elt), packageName)
+					temp.Type = "Object[]"
+					temp.Child = *child
+				}
 				temp.Description = stag.Get("description")
-				temp.Child = *child
 			case *ast.Ident:
 				if t.Obj != nil {
 					child := parseObject(t.Obj, packageName)
