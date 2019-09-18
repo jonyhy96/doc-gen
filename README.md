@@ -1,4 +1,6 @@
 # doc-gen 
+[![Go Report Card](https://goreportcard.com/badge/github.com/jonyhy96/doc-gen)](https://goreportcard.com/report/github.com/jonyhy96/doc-gen)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 doc-gen helps you to generate apidoc like comment
 
